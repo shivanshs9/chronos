@@ -1,0 +1,13 @@
+version: '3'
+services:
+  airflow:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - EXECUTOR=Sequential
+  sqs:
+    image: "roribio16/alpine-sqs:latest"
+    ports:
+      - "9324:9324"
+      - "9325:9325"
