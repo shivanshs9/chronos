@@ -2,6 +2,8 @@ FROM apache/airflow:latest
 
 MAINTAINER "Shivansh Saini" "shivansh.saini@headout.com"
 
+# Needed to not install system-globally
+ENV PIP_USER 'yes'
 ENV POETRY_VERSION 1.0.5
 ENV PYTHONPATH ${AIRFLOW_HOME}
 
@@ -15,14 +17,14 @@ COPY poetry.lock pyproject.toml ${AIRFLOW_HOME}/
 # Project initialization
 RUN poetry install --no-interaction --no-ansi
 
-COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
-COPY src/. ${AIRFLOW_HOME}/
-COPY scripts/entrypoint.sh /entrypoint
-
 EXPOSE 8080
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
+
+COPY config/airflow.cfg ./airflow.cfg
+COPY src/. ./
+COPY scripts/entrypoint.sh /entrypoint
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--", "/entrypoint" ]
 CMD [ "webserver" ]
