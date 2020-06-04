@@ -1,0 +1,4 @@
+[submodule "airflow-dag-creation-manager-plugin"]
+	path = submodules/airflow-dag-creation-manager-plugin
+	url = https://github.com/lattebank/airflow-dag-creation-manager-plugin.git
+	branch = master

@@ -24,6 +24,7 @@ WORKDIR ${AIRFLOW_HOME}
 
 COPY config/airflow.cfg ./airflow.cfg
 COPY src/. ./
+COPY build/. ./
 COPY scripts/entrypoint.sh /entrypoint
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--", "/entrypoint" ]
