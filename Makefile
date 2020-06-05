@@ -3,7 +3,7 @@ SRC_PLUGINS_DIR := plugins/
 BUILD_PLUGINS_DIR := $(BUILD_DIR)/plugins
 BUILD_PLUGINS_LIST := $(BUILD_PLUGINS_DIR)/dcmp
 
-.PHONY: help install-plugins docker-build build up
+.PHONY: help install-plugins docker-build build up clean
 
 help: ### Show this help message.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -25,3 +25,8 @@ docker-build: ### Runs the standard docker build
 
 up: install-plugins ### Builds and deploys the Chronos service
 	docker-compose up --build
+
+clean: ### Cleans the build files
+	@echo "Cleaning..."
+	rm -r $(BUILD_DIR)
+	@echo "Done!"
