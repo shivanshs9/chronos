@@ -94,6 +94,11 @@ if [ "$AIRFLOW__CORE__EXECUTOR" = "CeleryExecutor" ]; then
   wait_for_port "Redis" "$REDIS_HOST" "$REDIS_PORT"
 fi
 
+# Configure DCMP (Dag Creation Manager Plugin)
+if [ -d plugins/dcmp ]; then
+  python plugins/dcmp/tools/upgradedb.py
+fi
+
 case "$1" in
   webserver)
     airflow initdb

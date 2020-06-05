@@ -6,6 +6,7 @@ authors = ["Shivansh Saini <shivanshs9@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+flask-bcrypt = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 apache-airflow = {extras = ["aws"], version = "^1.10.10"}
