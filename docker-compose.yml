@@ -13,6 +13,8 @@ services:
     ports:
       - "9324:9324"
       - "9325:9325"
+    volumes:
+      - ./config/elasticmq.conf:/opt/config/elasticmq.conf
   db:
     image: mysql
     environment:

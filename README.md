@@ -13,6 +13,12 @@
   - Extra - `{ "host": "http://sqs:9324", "region_name": "default" }`
 - Navigate to DAG View and enable "example_sqs" DAG.
 
+### Queues
+
+- `default` - Regular queue
+- `fifo` - FIFO queue
+
 ### Troubleshooting
 
-- To exec into the container - `docker exec -it chronos_airflow_1 bash`
+- To check logs - `docker logs chronos_airflow_1`
+- To exec into the airflow container - `docker exec -it chronos_airflow_1 bash`
