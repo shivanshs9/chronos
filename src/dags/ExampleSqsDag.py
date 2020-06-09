@@ -13,12 +13,17 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 2,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(seconds=30),
     'start_date': days_ago(1),
     'schedule_interval': '@hourly',
 }
 
 queue_url = "http://sqs:9324/queue/{{ params.queue }}"
+
+class MySensor(SQSSensor):
+    def poke(self, context):
+        print('can_retry:', context['ti'].is_eligible_to_retry())
+        return super().poke(context)
 
 with DAG('example_sqs', default_args=default_args, params={
     'queue': 'default'
@@ -31,7 +36,9 @@ with DAG('example_sqs', default_args=default_args, params={
         xcom_push=True
     )
 
-    sqs_task = SQSSensor(
+    # push_task_to_sqs = 
+
+    sqs_task = MySensor(
         task_id='sqs',
         sqs_queue=queue_url,
         mode='reschedule'
