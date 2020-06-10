@@ -99,6 +99,11 @@ if [ -d plugins/dcmp ]; then
   python plugins/dcmp/tools/upgradedb.py
 fi
 
+# Configure Ergo plugin
+if [ -d plugins/ergo ]; then
+  python plugins/ergo/tools/upgradedb.py
+fi
+
 case "$1" in
   webserver)
     airflow initdb
