@@ -9,12 +9,12 @@ help: ### Show this help message.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 $(BUILD_PLUGINS_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 $(BUILD_PLUGINS_DIR)/%: $(SRC_PLUGINS_DIR)%
-	@rm -r $@
+	-@rm -r $@ >/dev/null 2>&1
 	@echo "Copying from $<..."
-	@cp -r `readlink -f $<` $@
+	@rsync -a --exclude="migrations" `readlink -f $<` $(BUILD_PLUGINS_DIR)
 
 install-plugins: $(BUILD_PLUGINS_DIR) $(BUILD_PLUGINS_LIST) ### Installs the necessary plugins for build step
 
@@ -29,5 +29,6 @@ up: install-plugins ### Builds and deploys the Chronos service
 
 clean: ### Cleans the build files
 	@echo "Cleaning..."
-	rm -r $(BUILD_DIR)
+	@find . -path "*/*/*.pyc"  -delete
+	@rm -r $(BUILD_DIR)
 	@echo "Done!"
