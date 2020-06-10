@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import (Column, ForeignKey, Index, Integer, String, Text,
-                        UtcDateTime)
+from sqlalchemy import Column, ForeignKey, Index, Integer, String, Text
 
 from airflow.models.base import Base
 from airflow.utils import timezone
+from airflow.utils.sqlalchemy import UtcDateTime
 from airflow.utils.state import State
 
 
@@ -23,9 +23,9 @@ class ErgoTask(Base):
         default=timezone.utcnow, onupdate=timezone.utcnow
     )
 
-    # __table_args__ = (
-    #     Index("et_primary_key", job_id, task_id, unique=True)
-    # )
+    __table_args__ = {
+        'extend_existing': True
+    }
 
     def __str__(self):
         return f'#{self.id}: {self.task_id}'
@@ -42,3 +42,7 @@ class ErgoJob(Base):
         unique=True
     )
     # TODO: other metadata (results, etc)
+
+    __table_args__ = {
+        'extend_existing': True
+    }

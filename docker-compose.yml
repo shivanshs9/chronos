@@ -8,6 +8,7 @@ services:
       EXECUTOR: "Local"
       AIRFLOW_CONN_AIRFLOW_DB: "mysql://user:password@db:3306/chronos"
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: "mysql://user:password@db:3306/chronos"
+      REQUEST_SQS_QUEUE: http://sqs:9324/queue/fifo
   sqs:
     image: "roribio16/alpine-sqs:latest"
     ports:

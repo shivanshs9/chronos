@@ -1,9 +1,9 @@
 from airflow.sensors.base_sensor_operator import BaseSensorOperator
+from airflow.utils.db import provide_session
 from airflow.utils.decorators import apply_defaults
-from airflow.utils.session import provide_session
 from airflow.utils.state import State
 
-from ..models import ErgoTask
+from ergo.models import ErgoTask
 
 
 class TaskRequestBatchSensor(BaseSensorOperator):

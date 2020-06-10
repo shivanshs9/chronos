@@ -1,10 +1,9 @@
 from airflow.contrib.hooks.aws_sqs_hook import SQSHook
 from airflow.operators import BaseOperator
+from airflow.utils.db import provide_session
 from airflow.utils.decorators import apply_defaults
-from airflow.utils.session import provide_session
 from airflow.utils.state import State
-
-from ...models import ErgoJob, ErgoTask
+from ergo.models import ErgoJob, ErgoTask
 
 
 class SqsTaskPusherOperator(BaseOperator):
@@ -72,3 +71,4 @@ class SqsTaskPusherOperator(BaseOperator):
                 for resp in failed_resps
             ]
             session.bulk_update_mappings(ErgoTask, task_mappings)
+        session.commit()

@@ -22,10 +22,10 @@ EXPOSE 8080
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
-COPY config/airflow.cfg ./airflow.cfg
-COPY src/. ./
-COPY build/. ./
 COPY scripts/entrypoint.sh /entrypoint
+COPY config/airflow.cfg ./airflow.cfg
+COPY build/. ./
+COPY src/. ./
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--", "/entrypoint" ]
 CMD [ "webserver" ]
