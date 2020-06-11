@@ -1,10 +1,11 @@
 import json
 
+from sqlalchemy.orm import joinedload
+
 from airflow.operators import BaseOperator
 from airflow.utils.db import provide_session
 from airflow.utils.decorators import apply_defaults
 from airflow.utils.state import State
-
 from ergo import JobResultStatus
 from ergo.models import ErgoJob, ErgoTask
 
@@ -32,9 +33,12 @@ class JobResultFromMessagesOperator(BaseOperator):
             for msg in messages
         ]
         results.sort(key=lambda res: res['jobId'])
-        jobs = session.query(ErgoJob).join(ErgoTask).filter(
-            ErgoJob.id.in_([res['jobId'] for res in results])
-        ).order_by(ErgoJob.id)
+        jobs = (
+            session.query(ErgoJob)
+            .options(joinedload('task'))
+            .filter(ErgoJob.id.in_([res['jobId'] for res in results]))
+            .order_by(ErgoJob.id)
+        )
         jobs = list(jobs)
         for result, job in zip(results, jobs):
             self.log.info('Processing result %s', str(result))

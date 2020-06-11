@@ -1,3 +1,5 @@
+from sqlalchemy.orm import joinedload
+
 from airflow.sensors.base_sensor_operator import BaseSensorOperator
 from airflow.utils.db import provide_session
 from airflow.utils.decorators import apply_defaults
@@ -19,9 +21,12 @@ class ErgoJobResultSensor(BaseSensorOperator):
     @provide_session
     def poke(self, context, session=None):
         ti = context['ti']
-        tasks = session.query(ErgoTask).join(ErgoJob).filter_by(
-            task_id=self.ergo_task_id, ti_dag_id=ti.dag_id,
+        tasks = (
+            session.query(ErgoTask)
+            .options(joinedload('job'))
+            .filter_by(task_id=self.ergo_task_id, ti_dag_id=ti.dag_id)
         )
+        self.log.info('Received %d results...', len(tasks))
         for task in tasks:
             job = task.job
             if job is None or task.state in State.unfinished():

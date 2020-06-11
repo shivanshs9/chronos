@@ -16,7 +16,7 @@ class TaskRequestBatchSensor(BaseSensorOperator):
         *args,
         **kwargs
     ):
-        poke_interval = kwargs.get('retry_delay', timedelta(minutes=2))
+        poke_interval = kwargs.get('retry_delay', timedelta(minutes=1))
         timeout = poke_interval * kwargs.get('retries', 10)
         kwargs['soft_fail'] = True
         kwargs['poke_interval'] = kwargs.get('poke_interval', poke_interval.total_seconds())
@@ -32,11 +32,17 @@ class TaskRequestBatchSensor(BaseSensorOperator):
             state=State.SCHEDULED
         ).limit(self.max_requests)
         result = list(result)
-        self.log.info(f'Query result: {result}')
+        self.log.info('Query result: %s', str(result))
         if len(result) < self.max_requests and context['ti'].is_eligible_to_retry():
             return False
         elif result:
-            self.xcom_push(context, self.xcom_tasks_key, result)
+            # Find unique tasks so sqs doesn't get duplicates
+            unique_result = list({
+                f'{task.task_id}{task.request_data if task.request_data else ""}': task
+                for task in result
+            }.values())
+            self.log.info('Unique results to push: %s', str(unique_result))
+            self.xcom_push(context, self.xcom_tasks_key, unique_result)
             return True
         else:
             return False

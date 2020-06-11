@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import choice
 
 from airflow import DAG
 from airflow.contrib.sensors.aws_sqs_sensor import SQSSensor
@@ -11,22 +12,28 @@ from airflow.utils.dates import days_ago
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'retries': 2,
+    'retries': 3,
     'retry_delay': timedelta(seconds=30),
     'start_date': days_ago(1),
 }
 
+SAMPLE_TASK_IDS = ['noArg', 'oneArg']
+SAMPLE_TASK_DATA = [{}, {'value': 2}, {'val': 'sa'}]
+
+def random_task_decider():
+    return choice(SAMPLE_TASK_IDS), choice(SAMPLE_TASK_DATA)
+
 with DAG(
     'example_sqs',
     default_args=default_args,
-    schedule_interval='@hourly'
+    schedule_interval=timedelta(minutes=10)
 ) as dag:
-    start_task  = DummyOperator(task_id= "start")
-    stop_task   = DummyOperator(task_id= "stop")
+    start_task  = DummyOperator(task_id="start")
+    stop_task   = DummyOperator(task_id="stop")
 
     push_task_to_sqs = ErgoTaskProducerOperator(
         task_id='example_task_pusher',
-        ergo_task_id='noArg'
+        ergo_task_callable=random_task_decider
     )
 
     wait_job_result = ErgoJobResultSensor(

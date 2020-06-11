@@ -72,9 +72,9 @@ class ErgoJob(Base):
 
     task = relationship('ErgoTask', back_populates='job')
 
-    def __init__(self, job_id, task, result=None):
+    def __init__(self, job_id, task_id, result=None):
         self.id = job_id
-        self.task_id = task.id
+        self.task_id = task_id
         if result is not None:
             # TODO: Parse result and fill
             pass

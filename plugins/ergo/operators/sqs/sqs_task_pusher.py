@@ -31,9 +31,10 @@ class SqsTaskPusherOperator(BaseOperator):
         self.log.info('SqsTaskPusherOperator trying to push %d messages on queue: %s', len(tasks), self.sqs_queue_url)
         entries = [
             {
-                'Id': task.id,
+                'Id': str(task.id),
                 'MessageBody': task.request_data,
-                'MessageGroupId': task.task_id
+                'MessageGroupId': task.task_id,
+                'MessageDeduplicationId': str(task.id)
             }
             for task in tasks
         ]
@@ -45,27 +46,21 @@ class SqsTaskPusherOperator(BaseOperator):
         failed_resps = response.get('Failed', list())
         if success_resps:
             self.log.info('SqsTaskPusherOperator successfully pushed %d messages!', len(success_resps))
-            task_mappings = [
-                {
-                    ErgoTask.id: resp['Id'],
-                    ErgoTask.state: State.QUEUED
-                }
-                for resp in success_resps
-            ]
-            session.bulk_update_mappings(ErgoTask, task_mappings)
+            success_tasks = session.query(ErgoTask).filter(
+                ErgoTask.id.in_([int(resp['Id']) for resp in success_resps])
+            )
+            for task in success_tasks:
+                task.state = State.QUEUED
             jobs = [
-                ErgoJob(resp['MessageId'], resp['Id'])
+                ErgoJob(resp['MessageId'], int(resp['Id']))
                 for resp in success_resps
             ]
             session.add_all(jobs)
         if failed_resps:
             self.log.error('SqsTaskPusherOperator failed to push %d messages!', len(failed_resps))
-            task_mappings = [
-                {
-                    ErgoTask.id: resp['Id'],
-                    ErgoTask.state: State.UP_FOR_RETRY
-                }
-                for resp in failed_resps
-            ]
-            session.bulk_update_mappings(ErgoTask, task_mappings)
+            failed_tasks = session.query(ErgoTask).filter(
+                ErgoTask.id.in_([int(resp['Id']) for resp in failed_resps])
+            )
+            for task in failed_tasks:
+                task.state = State.UP_FOR_RETRY
         session.commit()
