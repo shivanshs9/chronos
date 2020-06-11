@@ -25,7 +25,9 @@ class ErgoJobResultSensor(BaseSensorOperator):
             session.query(ErgoTask)
             .options(joinedload('job'))
             .filter_by(task_id=self.ergo_task_id, ti_dag_id=ti.dag_id)
+            # TODO filter on execution date (otherwise there's no point)
         )
+        tasks = list(tasks)
         self.log.info('Received %d results...', len(tasks))
         for task in tasks:
             job = task.job
