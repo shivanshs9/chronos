@@ -29,7 +29,7 @@ class TaskRequestBatchSensor(BaseSensorOperator):
     def poke(self, context, session=None):
         self.log.info('Querying for %s tasks...', State.QUEUED)
         result = session.query(ErgoTask).filter_by(
-            state=State.QUEUED
+            state=State.SCHEDULED
         ).limit(self.max_requests)
         result = list(result)
         self.log.info(f'Query result: {result}')

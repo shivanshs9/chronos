@@ -19,7 +19,8 @@ class ErgoTask(Base):
     id = Column(Integer, primary_key=True)
     task_id = Column(String(128), nullable=False)
     request_data = Column(Text, nullable=True)
-    state = Column(String(20), default=State.QUEUED, nullable=False)
+    # state transitions: SCHEDULED -> QUEUED -> RUNNING -> SUCCESS
+    state = Column(String(20), default=State.SCHEDULED, nullable=False) # enum{State}
     created_at = Column(
         UtcDateTime, index=True, default=timezone.utcnow, nullable=False
     )
