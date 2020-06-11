@@ -10,6 +10,7 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: "mysql://user:password@db:3306/chronos"
       REQUEST_SQS_QUEUE: http://sqs:9324/queue/fifo
       RESULT_SQS_QUEUE: http://sqs:9324/queue/fifo
+      FERNET_KEY: "9UL-jxKsyrEzz3Q4FBcGWNHfTv9kp31dJdBHHMs3OoQ="
   sqs:
     image: "roribio16/alpine-sqs:latest"
     ports:
