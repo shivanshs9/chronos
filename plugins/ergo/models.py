@@ -11,6 +11,8 @@ from airflow.utils import timezone
 from airflow.utils.sqlalchemy import UtcDateTime
 from airflow.utils.state import State
 
+from ergo import JobResultStatus
+
 Base = declarative_base()
 
 class ErgoTask(Base):
@@ -32,6 +34,7 @@ class ErgoTask(Base):
     ti_dag_id = Column(String(ID_LEN), nullable=False)
     ti_execution_date = Column(UtcDateTime, nullable=False)
 
+    job = relationship('ErgoJob', back_populates='task')
     # task_instance = relationship('TaskInstance')
 
     __table_args__ = (
@@ -62,7 +65,16 @@ class ErgoJob(Base):
         index=True,
         unique=True
     )
-    # TODO: other metadata (results, etc)
+    result_data = Column(Text, nullable=True)
+    result_code = Column(Integer, default=JobResultStatus.NONE, nullable=False)  # enum{JobResultStatus}
+    error_msg = Column(Text, nullable=True)
+    # TODO: other metadata?
 
-    def __init__(self, task):
+    task = relationship('ErgoTask', back_populates='job')
+
+    def __init__(self, job_id, task, result=None):
+        self.id = job_id
         self.task_id = task.id
+        if result is not None:
+            # TODO: Parse result and fill
+            pass

@@ -48,19 +48,16 @@ class SqsTaskPusherOperator(BaseOperator):
             task_mappings = [
                 {
                     ErgoTask.id: resp['Id'],
-                    ErgoTask.state: State.SCHEDULED
+                    ErgoTask.state: State.QUEUED
                 }
                 for resp in success_resps
             ]
             session.bulk_update_mappings(ErgoTask, task_mappings)
-            job_mappings = [
-                {
-                    ErgoJob.id: resp['MessageId'],
-                    ErgoJob.task_id: resp['Id']
-                }
+            jobs = [
+                ErgoJob(resp['MessageId'], resp['Id'])
                 for resp in success_resps
             ]
-            session.bulk_insert_mappings(ErgoJob, job_mappings)
+            session.add_all(jobs)
         if failed_resps:
             self.log.error('SqsTaskPusherOperator failed to push %d messages!', len(failed_resps))
             task_mappings = [

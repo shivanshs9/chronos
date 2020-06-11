@@ -5,11 +5,11 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-PACKAGE_PARENT = '..'
+PACKAGE_PARENT = '../..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from models import Base
+from ergo.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

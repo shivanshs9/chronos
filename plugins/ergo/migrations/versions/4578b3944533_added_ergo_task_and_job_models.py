@@ -13,7 +13,7 @@ import airflow
 # revision identifiers, used by Alembic.
 revision = '4578b3944533'
 down_revision = None
-branch_labels = ('ergo',)
+branch_labels = None
 depends_on = None
 
 

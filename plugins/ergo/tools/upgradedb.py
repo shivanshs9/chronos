@@ -69,8 +69,14 @@ def run_version_0_0_1():
         ignore_error=True
     )
 
+def run_version_0_0_2():
+    run_sql("ALTER TABLE ergo_job ADD COLUMN error_msg TEXT;", ignore_error=True)
+    run_sql("ALTER TABLE ergo_job ADD COLUMN result_code INTEGER NOT NULL;", ignore_error=True)
+    run_sql("ALTER TABLE ergo_job ADD COLUMN result_data TEXT;", ignore_error=True)
+
 def main():
     run_version_0_0_1()
+    run_version_0_0_2()
 
 if __name__ == "__main__":
     main()

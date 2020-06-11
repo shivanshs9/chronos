@@ -4,17 +4,16 @@ from os import path
 from airflow.models.dagbag import DagBag
 from airflow.plugins_manager import AirflowPlugin
 from airflow.utils.log.logging_mixin import LoggingMixin
-from ergo.operators.sqs.sqs_task_pusher import SqsTaskPusherOperator
-from ergo.operators.task_producer import TaskProducerOperator
-from ergo.sensors.task_requests_batcher import TaskRequestBatchSensor
+from ergo.operators.task_producer import ErgoTaskProducerOperator
+from ergo.sensors.job_result_sensor import ErgoJobResultSensor
 
 DAG_FOLDER = path.join(path.dirname(__file__), 'dags')
 TAG = 'ergo'
 
 class ErgoPlugin(AirflowPlugin, LoggingMixin):
     name = 'ergo'
-    operators = [TaskProducerOperator, SqsTaskPusherOperator]
-    sensors = [TaskRequestBatchSensor]
+    operators = [ErgoTaskProducerOperator]
+    sensors = [ErgoJobResultSensor]
     log = logging.root.getChild(f'{__name__}.{"ErgoPlugin"}')
 
     @classmethod
