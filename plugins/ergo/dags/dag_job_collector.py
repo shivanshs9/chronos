@@ -25,7 +25,7 @@ with DAG(
     'ergo_job_collector',
     default_args=default_args,
     is_paused_upon_creation=False,
-    schedule_interval=timedelta(minutes=30),
+    schedule_interval=timedelta(seconds=10),
     catchup=False,
     max_active_runs=1
 ) as dag:

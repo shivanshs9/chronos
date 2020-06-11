@@ -26,7 +26,7 @@ with DAG(
     'ergo_task_queuer',
     default_args=default_args,
     is_paused_upon_creation=False,
-    schedule_interval=timedelta(minutes=5),
+    schedule_interval=timedelta(seconds=10),
     catchup=False,
     max_active_runs=1
 ) as dag:
