@@ -36,7 +36,7 @@ def run_version_0_0_1():
             updated_at DATETIME NOT NULL, 
             ti_task_id VARCHAR(250) NOT NULL, 
             ti_dag_id VARCHAR(250) NOT NULL, 
-            ti_execution_date DATETIME NOT NULL, 
+            ti_execution_date TIMESTAMP(6) NOT NULL, 
             PRIMARY KEY (id), 
             FOREIGN KEY(ti_task_id, ti_dag_id, ti_execution_date) REFERENCES task_instance (task_id, dag_id, execution_date) ON DELETE CASCADE
         );

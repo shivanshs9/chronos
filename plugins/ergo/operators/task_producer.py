@@ -24,6 +24,8 @@ class ErgoTaskProducerOperator(BaseOperator):
     def execute(self, context, session=None):
         ti = context['ti']
         req_data = json.dumps(self.ergo_task_data) if self.ergo_task_data is not None else ''
+        self.log.info("Pushing task %s with data: %s", self.ergo_task_id, req_data)
         task = ErgoTask(self.ergo_task_id, ti, req_data)
         session.add(task)
         session.commit()
+        self.log.info("Pushed task %s to %s", str(task), task.state)
